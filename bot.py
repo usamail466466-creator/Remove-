@@ -38,7 +38,7 @@ async def delete_service_message(update: Update, context: ContextTypes.DEFAULT_T
     except Exception as e:
         logging.error(f"Error: {e}")
 
-async def main():
+def main():
     # এনভায়রনমেন্ট ভেরিয়েবল থেকে টোকেন নেওয়া
     TOKEN = os.environ.get('BOT_TOKEN')
     
@@ -46,6 +46,7 @@ async def main():
         logging.error("No BOT_TOKEN found in environment variables!")
         return
 
+    # অ্যাপ্লিকেশন তৈরি
     application = ApplicationBuilder().token(TOKEN).build()
     
     # স্টার্ট কমান্ড হ্যান্ডলার যুক্ত করা
@@ -58,18 +59,13 @@ async def main():
     )
     application.add_handler(service_handler)
     
-    # বট স্টার্ট করা
-    async with application:
-        await application.initialize()
-        await application.start_polling()
-        await asyncio.Event().wait()
+    # রান পোলিং (এটি অটোমেটিক লুপ হ্যান্ডেল করবে)
+    print("Bot is running...")
+    application.run_polling()
 
 if __name__ == '__main__':
     # ওয়েব সার্ভার আলাদা থ্রেডে চালানো
     Thread(target=run_web, daemon=True).start()
     
     # বট রান করা
-    try:
-        asyncio.run(main())
-    except (KeyboardInterrupt, SystemExit):
-        pass
+    main()
